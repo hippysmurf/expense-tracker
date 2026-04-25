@@ -1,14 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, LayoutDashboard, List, Moon, Sun } from 'lucide-react';
+import { Plus, LayoutDashboard, List, Moon, Sun, Lightbulb } from 'lucide-react';
 import { useExpenses } from '@/hooks/useExpenses';
 import { Expense, ExpenseFormData } from '@/types/expense';
 import ExpenseForm from '@/components/ExpenseForm';
 import ExpenseList from '@/components/ExpenseList';
 import Dashboard from '@/components/Dashboard';
+import MonthlyInsights from '@/components/MonthlyInsights';
 
-type Tab = 'dashboard' | 'expenses';
+type Tab = 'dashboard' | 'expenses' | 'insights';
 
 export default function Home() {
   const { expenses, isLoaded, addExpense, updateExpense, deleteExpense } = useExpenses();
@@ -74,6 +75,7 @@ export default function Home() {
             {([
               { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
               { key: 'expenses', label: 'Expenses', icon: List },
+              { key: 'insights', label: 'Insights', icon: Lightbulb },
             ] as { key: Tab; label: string; icon: React.ElementType }[]).map(({ key, label, icon: Icon }) => (
               <button
                 key={key}
@@ -88,7 +90,7 @@ export default function Home() {
               >
                 <Icon size={16} />
                 {label}
-                {key === 'expenses' && expenses.length > 0 && (
+                {(key === 'expenses' || key === 'insights') && expenses.length > 0 && (
                   <span className={`rounded-full px-2 py-0.5 text-xs ${dark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
                     {expenses.length}
                   </span>
@@ -107,6 +109,8 @@ export default function Home() {
           </div>
         ) : tab === 'dashboard' ? (
           <Dashboard expenses={expenses} dark={dark} />
+        ) : tab === 'insights' ? (
+          <MonthlyInsights expenses={expenses} dark={dark} />
         ) : (
           <ExpenseList expenses={expenses} onEdit={handleEdit} onDelete={deleteExpense} />
         )}
